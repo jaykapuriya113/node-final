@@ -248,14 +248,6 @@ exports.getAllProduct = async (req, res, next) => {
           as: "userComment",
         },
       },
-      {
-        $project: {
-          "userComment.email": 0,
-          "userComment.password": 0,
-          "userComment._id": 0,
-          "userComment.__v": 0,
-        },
-      },
     ];
 
     const temp = await Product.aggregate(query);
@@ -277,9 +269,11 @@ exports.getAllProduct = async (req, res, next) => {
         ...rest
       } = product;
 
-      const userCommentArray = userComment.map(({ name }, index) => ({
+      const userCommentArray = userComment.map(({ _id, name }, index) => ({
         name,
-        comment: comment[index].comment,
+        comment: comment
+          ?.map((c) => c.user_id.toString() === _id.toString() && c.comment)
+          ?.filter((d) => d !== false),
       }));
 
       return {
