@@ -1,27 +1,26 @@
 const Product = require("../model/productModel");
 const AppError = require("../errorHandler/AppError");
 const Comment = require("../model/commentmodel");
-
+/**
+ *
+ * @param  req user.id
+ * @param  res comment
+ * @param  next err
+ */
 exports.comment = async (req, res, next) => {
   try {
     const id = req.params.id;
-    const product = await Product.findById(id).populate("productType", {
-      name: 1,
-    });
+    const product = await Product.findById(id);
     if (!product) {
       return next(new AppError("Product does not exists", 403));
     }
 
     const addComment = new Comment({
       user_id: req.user.id,
-      product_id: product.id,
+      product_id: product._id,
       comment: req.body.comment,
     });
     const created = await addComment.save();
-
-    // product.comments.push(created._id);
-
-    // await product.save();
 
     if (created) {
       res.json({

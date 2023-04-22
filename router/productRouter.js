@@ -20,13 +20,17 @@ router
 router
   .route("/mostRecentProduct")
   .get(authController.protect, producutController.mostRecentProduct);
+
 router.route("/mostLikedProduct").get(likeController.MostLikedProduct);
+
 router
   .route("/comment/:id")
   .post(authController.protect, commentController.comment);
+
 router
   .route("/:id")
   .get(authController.protect, producutController.findProductById);
+
 router
   .route("/updateProduct/:id")
   .patch(authController.protect, producutController.updateProduct);

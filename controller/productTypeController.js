@@ -57,7 +57,7 @@ exports.getAllProductType = async (req, res, next) => {
 };
 /**
  * deletes product type by id
- * @param  req id
+ * @param  req The product delete request
  * @param  res
  * @param  next err
  */

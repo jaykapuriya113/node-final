@@ -5,7 +5,6 @@ const commentSchema = new mongoose.Schema(
     user_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      // userID
     },
     product_id: {
       type: mongoose.Schema.Types.ObjectId,
@@ -20,6 +19,6 @@ const commentSchema = new mongoose.Schema(
   { toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
 
-const Comment = mongoose.model("Comment", commentSchema);
+const Comment = new mongoose.model("Comment", commentSchema);
 
 module.exports = Comment;

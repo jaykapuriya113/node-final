@@ -12,7 +12,6 @@ const likeProductSchema = new mongoose.Schema(
     },
     likesCount: {
       type: Number,
-      // ref: "User",
     },
   },
 

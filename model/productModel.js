@@ -67,12 +67,7 @@ productSchema.virtual("comments", {
   localField: "_id",
   foreignField: "product_id",
 });
-productSchema.virtual("commentscount", {
-  ref: "Comment",
-  localField: "_id",
-  foreignField: "product_id",
-  count: true,
-});
+
 
 const Product = mongoose.model("Product", productSchema);
 module.exports = Product;

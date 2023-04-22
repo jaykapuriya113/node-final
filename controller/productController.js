@@ -2,79 +2,300 @@ const Product = require("../model/productModel");
 const AppError = require("../errorHandler/AppError");
 const ProductType = require("../model/productTypeModel");
 const LikeProduct = require("../model/likeProduct");
-
+const DisLikeProduct = require("../model/dislikeproduct");
+const Comment = require("../model/commentmodel");
 /**
  * gets all products
  * @param req
  * @param res status,statusCode,data
  * @param next err
  */
-//ama product type ma khali name avvu joi a    "productType": { "medicine"},  ammm
+
 exports.getAllProduct = async (req, res, next) => {
   try {
-    const temp = await Product.find()
-      .populate({ path: "productType", select: "-_id -__v" })
-      .populate({
-        path: "likes",
-        select: "user_id -_id -product_id",
-      })
-      .populate({
-        path: "likescount",
-      })
-      .populate({
-        path: "dislikes",
-        select: "user_id -_id -product_id",
-      })
-      .populate({
-        path: "dislikescount",
-      })
-      .populate({
-        path: "comments",
-        select: "user_id comment -_id -product_id",
-      })
-      .lean();
+    // const temp = await Product.find()
+    //   .populate({ path: "productType", select: "-_id -__v" })
+    //   .populate({
+    //     path: "likes",
+    //     select: "user_id -_id -product_id",
+    //   })
+    //   .populate({
+    //     path: "likescount",
+    //   })
+    //   .populate({
+    //     path: "dislikes",
+    //     select: "user_id -_id -product_id",
+    //   })
+    //   .populate({
+    //     path: "dislikescount",
+    //   })
+    //   .populate({
+    //     path: "comments",
+    //     select: "user_id comment -_id -product_id",
+    //   })
+    //   .lean();
 
-    console.log(temp);
+    // const recentProduct = temp.map((product) => {
+    //   const {
+    //     likes,
+    //     dislikes,
+    //     createdAt,
+    //     updatedAt,
+    //     __v,
+    //     productType,
+    //     comments,
+    //     expireDate,
+    //     likescount,
+    //     dislikescount,
+    //     ...rest
+    //   } = product;
+    //   return {
+    //     ...rest,
+    //     productType: productType.productType,
+    //     expireDate,
+    //     likescount,
+    //     likes: likes.map(({ user_id }) => user_id),
+    //     dislikescount,
+    //     dislikes: dislikes.map(({ user_id }) => user_id),
+    //     comments,
+    //   };
+    // });
+    // const query = [
+    //   {
+    //     $lookup: {
+    //       from: "likeproducts",
+    //       localField: "_id",
+    //       foreignField: "product_id",
+    //       as: "likes",
+    //     },
+    //   },
+    //   {
+    //     $lookup: {
+    //       from: "users",
+    //       localField: "likes.user_id",
+    //       foreignField: "_id",
+    //       as: "userlikes",
+    //     },
+    //   },
+    //   {
+    //     $project: {
+    //       "userlikes.email": 0,
+    //       "userlikes.password": 0,
+    //       "userlikes._id": 0,
+    //       "userlikes.__v": 0,
+    //     },
+    //   },
+    //   {
+    //     $addFields: {
+    //       total_likes: { $size: { $ifNull: ["$likes", []] } },
+    //     },
+    //   },
+    //   //////////////////////////////////////
+    //   {
+    //     $lookup: {
+    //       from: "dislikeproducts",
+    //       localField: "_id",
+    //       foreignField: "product_id",
+    //       as: "dislikes",
+    //     },
+    //   },
+    //   {
+    //     $lookup: {
+    //       from: "users",
+    //       localField: "dislikes.user_id",
+    //       foreignField: "_id",
+    //       as: "userdislikes",
+    //     },
+    //   },
+    //   {
+    //     $project: {
+    //       "userdislikes.email": 0,
+    //       "userdislikes.password": 0,
+    //       "userdislikes._id": 0,
+    //       "userdislikes.__v": 0,
+    //     },
+    //   },
+    //   {
+    //     $addFields: {
+    //       total_dislikes: { $size: { $ifNull: ["$dislikes", []] } },
+    //     },
+    //   },
+    //   //////////////////////////////////////////////////////////////
+    //   {
+    //     $lookup: {
+    //       from: "comments",
+    //       localField: "_id",
+    //       foreignField: "product_id",
+    //       as: "comments",
+    //     },
+    //   },
+    //   {
+    //     $lookup: {
+    //       from: "users",
+    //       localField: "comments.user_id",
+    //       foreignField: "_id",
+    //       as: "userComments",
+    //     },
+    //   },
+    //   {
+    //     $project: {
+    //       "userComments.email": 0,
+    //       "userComments.password": 0,
+    //       "userComments._id": 0,
+    //       "userComments.__v": 0,
+    //     },
+    //   },
+    //   {
+    //     $group: {
+    //       _id: "$_id",
+    //       productType: { $first: "$productType" },
+    //       productName: { $first: "$productName" },
+    //       expireDate: { $first: "$expireDate" },
+    //       price: { $first: "$price" },
+    //       description: { $first: "$description" },
+    //       timestamp: { $first: "$timestamp" },
+    //       photo: { $first: "$photo" },
+    //       likes: { $first: "$likes" },
+    //       userlikes: { $first: "$userlikes" },
+    //       total_likes: { $first: "$total_likes" },
+    //       dislikes: { $first: "$dislikes" },
+    //       userdislikes: { $first: "$userdislikes" },
+    //       total_dislikes: { $first: "$total_dislikes" },
+    //       userComments: { $push: "$comments" },
+    //     },
+    //   },
+    //   {
+    //     $addFields: {
+    //       total_comments: { $size: { $ifNull: ["$userComments", []] } },
+    //     },
+    //   },
+    // ];
 
-    const recentProduct = temp.map((product) => {
+    const query = [
+      {
+        $lookup: {
+          from: "likeproducts",
+          localField: "_id",
+          foreignField: "product_id",
+          as: "likes",
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "likes.user_id",
+          foreignField: "_id",
+          as: "userlikes",
+        },
+      },
+      {
+        $project: {
+          "userlikes.email": 0,
+          "userlikes.password": 0,
+          "userlikes._id": 0,
+          "userlikes.__v": 0,
+        },
+      },
+      {
+        $addFields: {
+          total_likes: { $size: { $ifNull: ["$likes", []] } },
+        },
+      },
+      //////////////////////////////////////
+      {
+        $lookup: {
+          from: "dislikeproducts",
+          localField: "_id",
+          foreignField: "product_id",
+          as: "dislikes",
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "dislikes.user_id",
+          foreignField: "_id",
+          as: "userdislikes",
+        },
+      },
+      {
+        $project: {
+          "userdislikes.email": 0,
+          "userdislikes.password": 0,
+          "userdislikes._id": 0,
+          "userdislikes.__v": 0,
+        },
+      },
+      {
+        $addFields: {
+          total_dislikes: { $size: { $ifNull: ["$dislikes", []] } },
+        },
+      },
+      //////////////////////////////////////////////////////////////
+      {
+        $lookup: {
+          from: "comments",
+          localField: "_id",
+          foreignField: "product_id",
+          as: "comment",
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "comment.user_id",
+          foreignField: "_id",
+          as: "userComment",
+        },
+      },
+      {
+        $project: {
+          "userComment.email": 0,
+          "userComment.password": 0,
+          "userComment._id": 0,
+          "userComment.__v": 0,
+        },
+      },
+    ];
+
+    const temp = await Product.aggregate(query);
+
+    const allProducts = temp.map((product) => {
       const {
-        likes,
+        comment,
+        userComment,
+        total_likes,
+        total_dislikes,
+        userlikes,
+        userdislikes,
         dislikes,
+        likes,
         createdAt,
         updatedAt,
         __v,
-        productType,
         comments,
-        expireDate,
-        likescount,
-        dislikescount,
         ...rest
       } = product;
+
+      const userCommentArray = userComment.map(({ name }, index) => ({
+        name,
+        comment: comment[index].comment,
+      }));
+
       return {
         ...rest,
-        productType: productType.productType,
-        expireDate,
-        likescount,
-        likes: likes.map(({ user_id }) => user_id),
-        dislikescount,
-        dislikes: dislikes.map(({ user_id }) => user_id),
-        comments,
+        total_likes,
+        userlikes: userlikes.map(({ name }) => name),
+        total_dislikes,
+        userdislikes: userdislikes.map(({ name }) => name),
+        userComment: userCommentArray,
       };
     });
-
-    console.log(recentProduct);
-
-    if (temp.length == 0) {
-      return res.status(200).json({
-        status: "Success",
-        message: "No data found",
-      });
-    }
 
     res.status(200).json({
       status: "Success",
       statusCode: 200,
-      recentProduct,
+      allProducts,
     });
   } catch (err) {
     return next(new AppError("No product exists", 500));
@@ -94,12 +315,9 @@ exports.createProduct = async (req, res, next) => {
     const existProducttype = await Product.find({
       productName: req.body.productName,
     });
-    console.log("existing", existProducttype);
     if (existProducttype.length > 0) {
       return next(new AppError("Already product is exist", 403));
     }
-
-    console.log(productName, expireDate, price, productType, description);
     let producttypeID;
     const producttype = await ProductType.findOne({ _id: productType });
 
@@ -137,7 +355,6 @@ exports.createProduct = async (req, res, next) => {
  * @param  req expiryDate,price,productName,productType,photo
  * @param  res statusCode,status,updated product
  * @param  next err
- * @returns updated product
  */
 exports.updateProduct = async (req, res, next) => {
   try {
@@ -171,7 +388,6 @@ exports.findProductById = async (req, res, next) => {
   try {
     const product = await Product.findById(req.params.id);
     const length = await LikeProduct.findById(product._id).count();
-    console.log(length);
     product.numOfLikes = length;
     res.status(200).json({
       status: "Success",
@@ -198,7 +414,13 @@ exports.deleteProduct = async (req, res, next) => {
     const productExists = await Product.findById(req.params.id);
     if (!productExists)
       return next(new AppError("Product does not exists", 400));
-
+    Promise.all([
+      LikeProduct.deleteMany({ product_id: req.params.id }),
+      DisLikeProduct.deleteMany({ product_id: req.params.id }),
+      Comment.deleteMany({ product_id: req.params.id }),
+    ]).then(() => {
+      console.log("all deleted");
+    });
     const product = await Product.findByIdAndDelete(req.params.id);
     res.status(200).json({
       status: "success",
@@ -247,3 +469,138 @@ exports.getProductByProductType = async (req, res, next) => {
     return next(new AppError("Something went wrong", 500));
   }
 };
+
+/*
+
+      // {
+      //   $lookup: {
+      //     from: "comments",
+      //     localField: "_id",
+      //     foreignField: "product_id",
+      //     as: "comment",
+      //   },
+      // },
+      // {
+      //   $lookup: {
+      //     from: "users",
+      //     localField: "comment.user_id",
+      //     foreignField: "_id",
+      //     as: "userComment",
+      //   },
+      // },
+      // {
+      //   $project: {
+      //     "userComment.email": 0,
+      //     "userComment.password": 0,
+      //     "userComment._id": 0,
+      //     "userComment.__v": 0,
+      //   },
+      // },
+*/
+
+/////////////////////////////////////////////////////////////////
+/*
+[
+      {
+        $lookup: {
+          from: "likeproducts",
+          localField: "_id",
+          foreignField: "product_id",
+          as: "likes",
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "likes.user_id",
+          foreignField: "_id",
+          as: "userlikes",
+        },
+      },
+      {
+        $project: {
+          "userlikes.email": 0,
+          "userlikes.password": 0,
+          "userlikes._id": 0,
+          "userlikes.__v": 0,
+        },
+      },
+      {
+        $addFields: {
+          total_likes: { $size: { $ifNull: ["$likes", []] } },
+        },
+      },
+      //////////////////////////////////////
+      {
+        $lookup: {
+          from: "dislikeproducts",
+          localField: "_id",
+          foreignField: "product_id",
+          as: "dislikes",
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "dislikes.user_id",
+          foreignField: "_id",
+          as: "userdislikes",
+        },
+      },
+      {
+        $project: {
+          "userdislikes.email": 0,
+          "userdislikes.password": 0,
+          "userdislikes._id": 0,
+          "userdislikes.__v": 0,
+        },
+      },
+      {
+        $addFields: {
+          total_dislikes: { $size: { $ifNull: ["$dislikes", []] } },
+        },
+      },
+      //////////////////////////////////////////////////////////////
+      {
+        $lookup: {
+          from: "comments",
+          localField: "_id",
+          foreignField: "product_id",
+          as: "comment",
+        },
+      },
+      {
+        $unwind: "$comment",
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "comment.user_id",
+          foreignField: "_id",
+          as: "userComment",
+        },
+      },
+      {
+        $unwind: "$userComment",
+      },
+      {
+        $group: {
+          _id: "$userComment.name",
+          comments: {
+            $push: "$comment.comment",
+          },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          name: "$_id",
+          comments: 1,
+          likes: 1,
+          dislikes: 1,
+          total_likes: 1,
+          total_dislikes: 1,
+        },
+      },
+    ];
+*/

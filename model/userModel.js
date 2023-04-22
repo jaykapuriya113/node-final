@@ -3,6 +3,7 @@ const validator = require("validator");
 const sendEmail = require("../utils/email");
 const bcrypt = require("bcrypt");
 const AppError = require("../errorHandler/AppError");
+
 const userSchema = mongoose.Schema({
   name: {
     type: String,
@@ -33,12 +34,6 @@ const userSchema = mongoose.Schema({
     },
   },
 });
-// userSchema.pre("save", async function (next) {
-//   if (this.password.includes(" ")) {
-//     return next(new AppError("Password has not valid"), 400);
-//   }
-//   next();
-// });
 userSchema.pre("save", async function (next) {
   const message = `your name is ${this.name} && your password is ${this.password}`;
   try {

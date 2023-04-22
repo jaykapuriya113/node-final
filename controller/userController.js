@@ -2,6 +2,7 @@ const User = require("../model/userModel");
 const AppError = require("../errorHandler/AppError");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+
 /**
  *
  * @param  req name,email,password,confirmPassword
@@ -45,34 +46,6 @@ exports.createUsers = async (req, res, next) => {
  * @param  next error
  */
 exports.loginUser = async (req, res, next) => {
-  // const { email, password } = req.body;
-  // try {
-  //   if (!email || !password) {
-  //     return next(new AppError("Please provide email and password", 400));
-  //   }
-  //   // if (password.inclues(" "))
-  //   //   return next(new AppError("Please provide email and password", 400));
-  //   const user = await User.findOne({ email: email }).select("+password");
-  //   if (!user) {
-  //     return next(new AppError("User not exist", 404));
-  //   }
-  //   const passwordexist = await bcrypt.compare(password, user.password);
-  //   if (passwordexist) {
-  //     const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
-  //       expiresIn: process.env.JWT_EXPIRES_IN,
-  //     });
-  //     // const token=signToken(user._id);
-  //     res.status(200).json({
-  //       status: "Success",
-  //       statusCode: 200,
-  //       data: user,
-  //       token,
-  //     });
-  //   }
-  // } catch (err) {
-  //   return next(new AppError("Incorrect email or password", 403));
-  // }
-
   try {
     const { email, password } = req.body;
     // console.log(email, password);
@@ -95,12 +68,14 @@ exports.loginUser = async (req, res, next) => {
 
     res.status(200).json({
       status: "success",
+      statusCode: 201,
       token,
       user,
     });
   } catch (error) {
     res.status(401).json({
       status: "failed",
+      statusCode: 401,
       message: "Incorrect email or password",
     });
   }

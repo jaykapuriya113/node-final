@@ -2,14 +2,17 @@ const AppError = require("../errorHandler/AppError");
 const jwt = require("jsonwebtoken");
 const User = require("../model/userModel");
 
+/**
+ * creates and sends jwt token
+ * @param  req user
+ * @param  res statusCode
+ * @param  next err
+ */
 const protect = async (req, res, next) => {
   try {
     let token;
-    if (
-      req.headers.authorization &&
-      req.headers.authorization.startsWith("Bearer")
-    );
-    {
+    let head = req.headers.authorization.split(" ")[0];
+    if (req.headers.authorization && head === "Bearer") {
       token = req.headers.authorization.split(" ")[1];
     }
 

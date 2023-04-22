@@ -16,11 +16,6 @@ const like = async (req, res, next) => {
       return next(new AppError("product not found", 404));
     }
 
-    // await DisLike.findOneAndDelete({
-    //   user_id: req.user.id,
-    //   product_id: id,
-    // });
-
     const existinglike = await Like.findOne({
       user_id: req.user.id,
       product_id: id,
@@ -76,46 +71,6 @@ const like = async (req, res, next) => {
   }
 };
 
-//////////////////////////////////////////////////////
-////create dislike
-// const dislike = async (req, res, next) => {
-//   try {
-//     const id = req.params.id;
-//     const product = await Product.findById(id);
-
-//     if (!product) {
-//       return next(new AppError("product is not found", 404));
-//     }
-
-//     await Like.findOneAndDelete({
-//       user_id: req.user.id,
-//       product_id: id,
-//     });
-
-//     const existingdislike = await DisLike.findOne({
-//       user_id: req.user.id,
-//       product_id: id,
-//     });
-//     if (existingdislike) {
-//       return next(new AppError("you Have already dislike this product", 400));
-//     }
-//     const dislike = await DisLike.create({
-//       user_id: req.user.id,
-//       product_id: id,
-//     });
-//     res.status(400).json({
-//       status: "success",
-//       msg: "successfully disliked this product",
-//       dislike,
-//     });
-//   } catch (err) {
-//     return next(
-//       new AppError("some thing went wrong in dislike controller", 404)
-//     );
-//   }
-// };
-//ama jo count ave a brabar 6
-//////////////////////////////////////////////////
 ///get most liked product
 const MostLikedProduct = async (req, res, next) => {
   const likedProduct = await Like.aggregate([
